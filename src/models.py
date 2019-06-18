@@ -15,7 +15,7 @@ class User(db.Model):
     resumeStyle = db.Column(db.String(120), unique=True, nullable=False)
     theme = db.Column(db.String(120), unique=True, nullable=False)
     title = db.Column(db.String(120), unique=True, nullable=False)
-    classes = db.relationship('Product', backref='user', lazy=True)
+    products = db.relationship('Product', backref='user', lazy=True)
     #children = relationship("Child")
     #products = db.relationship('Product', backref='User', lazy=True)
     def __repr__(self):
