@@ -15,7 +15,7 @@ class User(db.Model):
     resumeStyle = db.Column(db.String(120), unique=True, nullable=False)
     theme = db.Column(db.String(120), unique=True, nullable=False)
     title = db.Column(db.String(120), unique=True, nullable=False)
-    products = db.relationship('Product', backref='user', lazy=True)
+    products = db.relationship('Product', lazy=True)
     #children = relationship("Child")
     #products = db.relationship('Product', backref='User', lazy=True)
     def __repr__(self):
@@ -41,14 +41,14 @@ class User(db.Model):
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(80), unique=True, nullable=False)
-    date = db.Column(db.Date(80), unique=True, nullable=False)
-    url = db.Column(db.String(80), unique=True, nullable=False)
-    page = db.Column(db.Boolean(80), unique=True, nullable=False)
+    description = db.Column(db.String(80), nullable=False)
+    date = db.Column(db.String(80), nullable=False)
+    url = db.Column(db.String(80), nullable=False)
+    page = db.Column(db.Boolean(80), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     #children = relationship("Child")
     #products = db.relationship('Product', backref='User', lazy=True)
-   
+
     def __repr__(self):
         return '<Product %r>' % self.firstname
 
@@ -58,6 +58,7 @@ class Product(db.Model):
             "date": self.date,
             "url": self.url,
             "page": self.page,
+            "user_id": self.user_id,
             "id": self.id
 
         }

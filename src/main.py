@@ -107,7 +107,93 @@ def get_single_person(user_id):
 
     return "Invalid Method", 404
 
+##############################################################################
+#Product
+##############################################################################
+
+@app.route('/product', methods=['POST', 'GET'])
+def handle_product():
+    """
+    Create product and retrieve all products
+    """
+
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+        if 'description' not in body:
+            raise APIException('You need to specify the description', status_code=400)
+        if 'date' not in body:
+            raise APIException('You need to specify the date', status_code=400)
+
+        product1 = Product(
+            description=body['description'],
+            date=body['date'],
+            url=body['url'],
+            page=body['page'],
+            user_id=body["user_id"])
+
+        db.session.add(product1)
+        db.session.commit()
+        return "ok", 200
+
+    # GET request
+    if request.method == 'GET':
+        all_products = Product.query.all()
+        all_products = list(map(lambda x: x.serialize(), all_products))
+        return jsonify(all_products), 200
+
+    return "Invalid Method", 404
+
+
+@app.route('/product/<int:product_id>', methods=['PUT', 'GET', 'DELETE'])
+def get_single_product(product_id):
+    """
+    Single user
+    """
+
+    # PUT request
+    if request.method == 'PUT':
+        body = request.get_json()
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+
+        product1 = Product.query.get(product_id)
+        if product1 is None:
+            raise APIException('User not found', status_code=404)
+
+        if "description" in body:
+            product1.description = body["description"]
+        if "date" in body:
+            product1.date = body["date"]
+        db.session.commit()
+
+        return jsonify(product1.serialize()), 200
+
+    # GET request
+    if request.method == 'GET':
+        product1 = Product.query.get(product_id)
+        if product1 is None:
+            raise APIException('User not found', status_code=404)
+        return jsonify(product1.serialize()), 200
+
+    # DELETE request
+    if request.method == 'DELETE':
+        product1 = Product.query.get(product_id)
+        if product1 is None:
+            raise APIException('User not found', status_code=404)
+        db.session.delete(product1)
+        db.session.commit()
+        return "ok", 200
+
+    return "Invalid Method", 404
+
+
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
     app.run(host='0.0.0.0', port=PORT)
+
+
