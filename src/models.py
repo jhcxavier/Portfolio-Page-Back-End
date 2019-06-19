@@ -50,13 +50,35 @@ class Product(db.Model):
     #products = db.relationship('Product', backref='User', lazy=True)
 
     def __repr__(self):
-        return '<Product %r>' % self.firstname
+        return '<Product %r>' % self.description
 
     def serialize(self):
         return {
             "description": self.description,
             "date": self.date,
             "url": self.url,
+            "page": self.page,
+            "user_id": self.user_id,
+            "id": self.id
+
+        }
+
+class About(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(80), nullable=False)
+    resume = db.Column(db.String(80), nullable=False)
+    page = db.Column(db.String(80), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    #children = relationship("Child")
+    #products = db.relationship('Product', backref='User', lazy=True)
+
+    def __repr__(self):
+        return '<About %r>' % self.description
+
+    def serialize(self):
+        return {
+            "description": self.description,
+            "resume": self.resume,
             "page": self.page,
             "user_id": self.user_id,
             "id": self.id

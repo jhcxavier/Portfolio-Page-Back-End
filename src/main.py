@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
-from models import db, User, Product
+from models import db, User, Product, About
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
@@ -190,7 +190,89 @@ def get_single_product(product_id):
 
     return "Invalid Method", 404
 
+################################################################################
+#About
+################################################################################
 
+@app.route('/about', methods=['POST', 'GET'])
+def handle_about():
+    """
+    Create about and retrieve it all
+    """
+
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+        if 'description' not in body:
+            raise APIException('You need to specify the description', status_code=400)
+        if 'resume' not in body:
+            raise APIException('You need to specify the resume', status_code=400)
+
+        about1 = About(
+            description=body['description'],
+            resume=body['resume'],
+            page=body['page'],
+            user_id=body["user_id"])
+
+        db.session.add(about1)
+        db.session.commit()
+        return "ok", 200
+
+    # GET request
+    if request.method == 'GET':
+        all_about = About.query.all()
+        all_about = list(map(lambda x: x.serialize(), all_about))
+        return jsonify(all_about), 200
+
+    return "Invalid Method", 404
+
+
+@app.route('/about/<int:product_id>', methods=['PUT', 'GET', 'DELETE'])
+def get_single_about(about_id):
+    """
+    Single user
+    """
+
+    # PUT request
+    if request.method == 'PUT':
+        body = request.get_json()
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+
+        about1 = Product.query.get(about_id)
+        if about1 is None:
+            raise APIException('User not found', status_code=404)
+
+        if "description" in body:
+            about1.description = body["description"]
+        if "date" in body:
+            about1.date = body["date"]
+        db.session.commit()
+
+        return jsonify(about1.serialize()), 200
+
+    # GET request
+    if request.method == 'GET':
+        about1 = About.query.get(about_id)
+        if about1 is None:
+            raise APIException('User not found', status_code=404)
+        return jsonify(about1.serialize()), 200
+
+    # DELETE request
+    if request.method == 'DELETE':
+        about1 = About.query.get(about_id)
+        if about1 is None:
+            raise APIException('User not found', status_code=404)
+        db.session.delete(about1)
+        db.session.commit()
+        return "ok", 200
+
+    return "Invalid Method", 404
+
+###############################################################################
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
