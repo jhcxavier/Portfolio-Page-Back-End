@@ -6,15 +6,15 @@ db = SQLAlchemy()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    firstname = db.Column(db.String(80), unique=True, nullable=False)
-    lastname = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=True, nullable=False)
-    dobDate = db.Column(db.String(10), unique=True, nullable=False)
-    imageURL = db.Column(db.String(120), unique=True, nullable=False)
-    resumeStyle = db.Column(db.String(120), unique=True, nullable=False)
-    theme = db.Column(db.String(120), unique=True, nullable=False)
-    title = db.Column(db.String(120), unique=True, nullable=False)
+    firstname = db.Column(db.String(80), unique=True, nullable=True)
+    lastname = db.Column(db.String(80), unique=True, nullable=True)
+    email = db.Column(db.String(120), unique=True, nullable=True)
+    password = db.Column(db.String(80), unique=True, nullable=True)
+    dobDate = db.Column(db.String(10), unique=True, nullable=True)
+    imageURL = db.Column(db.String(120), unique=True, nullable=True)
+    resumeStyle = db.Column(db.String(120), unique=True, nullable=True)
+    theme = db.Column(db.String(120), unique=True, nullable=True)
+    title = db.Column(db.String(120), unique=True, nullable=True)
     products = db.relationship('Product', lazy=True)
     #children = relationship("Child")
     #products = db.relationship('Product', backref='User', lazy=True)
@@ -25,6 +25,7 @@ class User(db.Model):
         # products = []
         # for g in self.products:
         #     products.append(g.serialize())
+
         return {
             "firstname": self.firstname,
             "lastname": self.lastname,
@@ -41,11 +42,11 @@ class User(db.Model):
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(80), nullable=False)
-    date = db.Column(db.String(80), nullable=False)
-    url = db.Column(db.String(80), nullable=False)
-    page = db.Column(db.Boolean(80), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    description = db.Column(db.String(80), nullable=True)
+    date = db.Column(db.String(80), nullable=True)
+    url = db.Column(db.String(80), nullable=True)
+    page = db.Column(db.Boolean(80), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     #children = relationship("Child")
     #products = db.relationship('Product', backref='User', lazy=True)
 
@@ -65,10 +66,10 @@ class Product(db.Model):
 
 class About(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    description = db.Column(db.String(80), nullable=False)
-    resume = db.Column(db.String(80), nullable=False)
-    page = db.Column(db.String(80), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    description = db.Column(db.String(80), nullable=True)
+    resume = db.Column(db.String(80), nullable=True)
+    page = db.Column(db.String(80), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     #children = relationship("Child")
     #products = db.relationship('Product', backref='User', lazy=True)
 
@@ -81,6 +82,35 @@ class About(db.Model):
             "resume": self.resume,
             "page": self.page,
             "user_id": self.user_id,
+            "id": self.id
+
+        }
+
+class Experience(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80), nullable=True)
+    company = db.Column(db.String(80), nullable=True)
+    description = db.Column(db.String(80), nullable=True)
+    from_date = db.Column(db.String(80), nullable=True)
+    to_date = db.Column(db.String(80), nullable=True)
+    resume = db.Column(db.String(80), nullable=True)
+    page = db.Column(db.String(80), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    #children = relationship("Child")
+    #products = db.relationship('Product', backref='User', lazy=True)
+
+    def __repr__(self):
+        return '<Experience %r>' % self.title
+
+    def serialize(self):
+        return {
+            "title": self.title,
+            "company": self.company,
+            "description": self.description,
+            "from_date": self.from_date,
+            "to_date": self.to_date,
+            "resume": self.resume,
+            "page": self.page,
             "id": self.id
 
         }
