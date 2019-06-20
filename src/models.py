@@ -15,16 +15,18 @@ class User(db.Model):
     resumeStyle = db.Column(db.String(120), unique=True, nullable=True)
     theme = db.Column(db.String(120), unique=True, nullable=True)
     title = db.Column(db.String(120), unique=True, nullable=True)
-    products = db.relationship('Product', lazy=True)
+    product = db.relationship('Product', lazy=True)
+    about = db.relationship('About', lazy=True)
+    experience = db.relationship('Experience', lazy=True)
     #children = relationship("Child")
     #products = db.relationship('Product', backref='User', lazy=True)
     def __repr__(self):
         return '<User %r>' % self.firstname
 
     def serialize(self):
-        # products = []
-        # for g in self.products:
-        #     products.append(g.serialize())
+        experiences = []
+        for e in self.experience:
+            experiences.append(e.serialize())
 
         return {
             "firstname": self.firstname,
@@ -37,7 +39,7 @@ class User(db.Model):
             "theme": self.theme,
             "title": self.title,
             "id": self.id,
-            # "products": products
+            "experiences": experiences
         }
 
 class Product(db.Model):
@@ -107,8 +109,8 @@ class Experience(db.Model):
             "title": self.title,
             "company": self.company,
             "description": self.description,
-            "fromDate": self.from_date,
-            "toDate": self.to_date,
+            "fromDate": self.fromDate,
+            "toDate": self.toDate,
             "resume": self.resume,
             "page": self.page,
             "id": self.id
