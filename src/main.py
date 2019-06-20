@@ -24,6 +24,33 @@ CORS(app)
 app.config['JWT_SECRET_KEY'] = 'we are badass'  # Change this!
 jwt = JWTManager(app)
 
+#########################################################################
+#JWT Security
+#########################################################################
+
+@app.route('/login', methods=['POST'])
+def login():
+    if not request.is_json:
+        return jsonify({"msg": "Missing JSON in request"}), 400
+
+    params = request.get_json()
+    firstname = params.get('firstname', None)
+    email = params.get('email', None)
+
+    if not firstname:
+        return jsonify({"msg": "Missing firstname parameter"}), 400
+    if not email:
+        return jsonify({"msg": "Missing email parameter"}), 400
+
+    if firstname != 'test' or email != 'test':
+        return jsonify({"msg": "Bad firstname or email"}), 401
+
+    # Identity can be any data that is json serializable
+    ret = {'jwt': create_jwt(identity=firstname)}
+    return jsonify(ret), 200
+
+###########################################################################
+
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.toDict()), error.status_code
@@ -34,7 +61,6 @@ def sitemap():
 
 
 @app.route('/user', methods=['POST', 'GET'])
-@jwt_required
 def handle_user():
     """
     Create person and retrieve all persons
@@ -43,6 +69,7 @@ def handle_user():
     # POST request
     if request.method == 'POST':
         body = request.get_json()
+
 
         if body is None:
             raise APIException("You need to specify the request body as a json object", status_code=400)
