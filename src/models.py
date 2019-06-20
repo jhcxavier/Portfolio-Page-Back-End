@@ -91,8 +91,8 @@ class Experience(db.Model):
     title = db.Column(db.String(80), nullable=True)
     company = db.Column(db.String(80), nullable=True)
     description = db.Column(db.String(80), nullable=True)
-    from_date = db.Column(db.String(80), nullable=True)
-    to_date = db.Column(db.String(80), nullable=True)
+    fromDate = db.Column(db.String(80), nullable=True)
+    toDate = db.Column(db.String(80), nullable=True)
     resume = db.Column(db.String(80), nullable=True)
     page = db.Column(db.String(80), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
@@ -107,8 +107,8 @@ class Experience(db.Model):
             "title": self.title,
             "company": self.company,
             "description": self.description,
-            "from_date": self.from_date,
-            "to_date": self.to_date,
+            "fromDate": self.from_date,
+            "toDate": self.to_date,
             "resume": self.resume,
             "page": self.page,
             "id": self.id

@@ -18,7 +18,7 @@ CORS(app)
 
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
-    return jsonify(error.to_dict()), error.status_code
+    return jsonify(error.toDict()), error.status_code
 
 @app.route('/')
 def sitemap():
@@ -99,7 +99,7 @@ def get_single_person(user_id):
             user1.theme = body["theme"]
         if "title" in body:
             user1.title = body["title"]
-        
+
         db.session.commit()
 
         return jsonify(user1.serialize()), 200
@@ -271,7 +271,7 @@ def get_single_about(about_id):
             about1.resume = body["resume"]
         if "page" in body:
             about1.page = body["page"]
-        
+
         db.session.commit()
 
         return jsonify(about1.serialize()), 200
@@ -319,8 +319,8 @@ def handle_experience():
             title=body['title'],
             company=body['company'],
             description=body['description'],
-            from_date=body['from_date'],
-            to_date=body['to_date'],
+            fromDate=body['fromDate'],
+            toDate=body['toDate'],
             resume=body['resume'],
             page=body["page"],
             user_id=body["user_id"])
@@ -360,10 +360,10 @@ def get_single_experience(experience_id):
             experience1.company = body["company"]
         if "description" in body:
             experience1.description = body["description"]
-        if "from_date" in body:
-            experience1.from_date = body["from_date"]
-        if "to_date" in body:
-            experience1.to_date = body["to_date"]
+        if "fromDate" in body:
+            experience1.fromDate = body["fromDate"]
+        if "toDate" in body:
+            experience1.toDate = body["toDate"]
         if "resume" in body:
             experience1.resume = body["resume"]
         if "page" in body:
