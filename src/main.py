@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
-from models import db, User, Product, About, Experience
+from models import db, User, Product, About, Experience, Education, Skills
 from flask_jwt_simple import (
     JWTManager, jwt_required, create_jwt, get_jwt_identity
 )
@@ -34,19 +34,19 @@ def login():
         return jsonify({"msg": "Missing JSON in request"}), 400
 
     params = request.get_json()
-    firstname = params.get('firstname', None)
+    password = params.get('password', None)
     email = params.get('email', None)
 
-    if not firstname:
-        return jsonify({"msg": "Missing firstname parameter"}), 400
+    if not password:
+        return jsonify({"msg": "Missing password parameter"}), 400
     if not email:
         return jsonify({"msg": "Missing email parameter"}), 400
 
-    if firstname != 'test' or email != 'test':
-        return jsonify({"msg": "Bad firstname or email"}), 401
+    if password != 'test' or email != 'test':
+        return jsonify({"msg": "Bad password or email"}), 401
 
     # Identity can be any data that is json serializable
-    ret = {'jwt': create_jwt(identity=firstname)}
+    ret = {'jwt': create_jwt(identity=password)}
     return jsonify(ret), 200
 
 ###########################################################################
@@ -430,6 +430,181 @@ def get_single_experience(experience_id):
 ###############################################################################
 #Education
 ###############################################################################
+
+@app.route('/education', methods=['POST', 'GET'])
+def handle_education():
+    """
+    Create education and retrieve it all
+    """
+
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+        if 'school' not in body:
+            raise APIException('You need to specify the school', status_code=400)
+        if 'degree' not in body:
+            raise APIException('You need to specify the degree', status_code=400)
+
+        education1 = Education(
+            school=body['school'],
+            degree=body['degree'],
+            course=body['course'],
+            fromDate=body['fromDate'],
+            toDate=body['toDate'],
+            resume=body['resume'],
+            user_id=body["user_id"])
+
+        db.session.add(education1)
+        db.session.commit()
+        return "ok", 200
+
+    # GET request
+    if request.method == 'GET':
+        all_education = Education.query.all()
+        all_education = list(map(lambda x: x.serialize(), all_education))
+        return jsonify(all_education), 200
+
+    return "Invalid Method", 404
+
+
+@app.route('/education/<int:education_id>', methods=['PUT', 'GET', 'DELETE'])
+def get_single_education(education_id):
+    """
+    Single user
+    """
+
+    # PUT request
+    if request.method == 'PUT':
+        body = request.get_json()
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+
+        education1 = Education.query.get(education_id)
+        if education1 is None:
+            raise APIException('User not found', status_code=404)
+
+        if "school" in body:
+            education1.school = body["school"]
+        if "degree" in body:
+            education1.degree = body["degree"]
+        if "course" in body:
+            education1.course = body["course"]
+        if "fromDate" in body:
+            education1.fromDate = body["fromDate"]
+        if "toDate" in body:
+            education1.toDate = body["toDate"]
+        if "resume" in body:
+            education1.resume = body["resume"]
+
+        db.session.commit()
+
+        return jsonify(education1.serialize()), 200
+
+    # GET request
+    if request.method == 'GET':
+        education1 = Experience.query.get(education_id)
+        if education1 is None:
+            raise APIException('User not found', status_code=404)
+        return jsonify(education1.serialize()), 200
+
+    # DELETE request
+    if request.method == 'DELETE':
+        education1 = Education.query.get(education_id)
+        if education1 is None:
+            raise APIException('User not found', status_code=404)
+        db.session.delete(education1)
+        db.session.commit()
+        return "ok", 200
+
+    return "Invalid Method", 404
+
+############################################################################
+#Skills
+############################################################################
+
+@app.route('/skills', methods=['POST', 'GET'])
+def handle_skills():
+    """
+    Create skill and retrieve it all
+    """
+
+    # POST request
+    if request.method == 'POST':
+        body = request.get_json()
+
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+        if 'skill' not in body:
+            raise APIException('You need to specify the skill', status_code=400)
+        if 'resume' not in body:
+            raise APIException('You need to specify the resume', status_code=400)
+
+        skill1 = Skills(
+            skill=body['skill'],
+            resume=body['resume'],
+            page=body['page'],
+            user_id=body["user_id"])
+
+        db.session.add(skill1)
+        db.session.commit()
+        return "ok", 200
+
+    # GET request
+    if request.method == 'GET':
+        all_skill = Skills.query.all()
+        all_skill = list(map(lambda x: x.serialize(), all_skill))
+        return jsonify(all_skill), 200
+
+    return "Invalid Method", 404
+
+
+@app.route('/skills/<int:about_id>', methods=['PUT', 'GET', 'DELETE'])
+def get_single_about(skill_id):
+    """
+    Single user
+    """
+
+    # PUT request
+    if request.method == 'PUT':
+        body = request.get_json()
+        if body is None:
+            raise APIException("You need to specify the request body as a json object", status_code=400)
+
+        skill1 = About.query.get(skill_id)
+        if skill1 is None:
+            raise APIException('User not found', status_code=404)
+
+        if "skill" in body:
+            skill1.skill = body["skill"]
+        if "resume" in body:
+            skill1.resume = body["resume"]
+        if "page" in body:
+            skill1.page = body["page"]
+
+        db.session.commit()
+
+        return jsonify(skill1.serialize()), 200
+
+    # GET request
+    if request.method == 'GET':
+        skill1 = Skills.query.get(skill_id)
+        if skill1 is None:
+            raise APIException('User not found', status_code=404)
+        return jsonify(skill1.serialize()), 200
+
+    # DELETE request
+    if request.method == 'DELETE':
+        skill1 = Skills.query.get(skill_id)
+        if skill1 is None:
+            raise APIException('User not found', status_code=404)
+        db.session.delete(skill1)
+        db.session.commit()
+        return "ok", 200
+
+    return "Invalid Method", 404
 
 
 if __name__ == '__main__':
