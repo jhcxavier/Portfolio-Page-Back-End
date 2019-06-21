@@ -561,8 +561,8 @@ def handle_skills():
     return "Invalid Method", 404
 
 
-@app.route('/skills/<int:about_id>', methods=['PUT', 'GET', 'DELETE'])
-def get_single_about(skill_id):
+@app.route('/skills/<int:skill_id>', methods=['PUT', 'GET', 'DELETE'])
+def get_single_skills(skill_id):
     """
     Single user
     """
@@ -571,9 +571,9 @@ def get_single_about(skill_id):
     if request.method == 'PUT':
         body = request.get_json()
         if body is None:
-            raise APIException("You need to specify the request body as a json object", status_code=400)
+            raise APIException("You need to specify the request as a json object", status_code=400)
 
-        skill1 = About.query.get(skill_id)
+        skill1 = Skills.query.get(skill_id)
         if skill1 is None:
             raise APIException('User not found', status_code=404)
 
