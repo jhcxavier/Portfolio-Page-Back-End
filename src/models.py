@@ -15,13 +15,12 @@ class User(db.Model):
     resumeStyle = db.Column(db.String(120), unique=False, default="")
     theme = db.Column(db.String(120), unique=False, default="")
     title = db.Column(db.String(120), unique=False, default="")
-    purpose = db.Column(db.String(250), default="")
-    product = db.relationship('Product', lazy=True)
     about = db.relationship('About', lazy=True)
+    product = db.relationship('Product', lazy=True)
     experience = db.relationship('Experience', lazy=True)
     education = db.relationship('Education', lazy=True)
-    #children = relationship("Child")
-    #products = db.relationship('Product', backref='User', lazy=True)
+    skills = db.relationship('Skills', lazy=True)
+
     def __repr__(self):
         return '<User %r>' % self.firstname
 
@@ -29,19 +28,58 @@ class User(db.Model):
         experiences = []
         for e in self.experience:
             experiences.append(e.serialize())
+        education = []
+        for e in self.education:
+            education.append(e.serialize())
+        skills = []
+        for e in self.skills:
+            skills.append(e.serialize())
 
         return {
-            "firstname": self.firstname,
-            "lastname": self.lastname,
-            "email": self.email,
-            "password": self.password,
-            "dobDate": self.dobDate,
-            "imageURL": self.imageURL,
-            "resumeStyle": self.resumeStyle,
-            "theme": self.theme,
-            "title": self.title,
-            "id": self.id,
-            "experiences": experiences
+            "user": {
+                "firstname": self.firstname,
+                "lastname": self.lastname,
+                "email": self.email,
+                "password": self.password,
+                "dobDate": self.dobDate,
+                "imageURL": self.imageURL,
+                "resumeStyle": self.resumeStyle,
+                "theme": self.theme,
+                "title": self.title,
+                "id": self.id,
+                "porpuse": self.purpose
+            },
+            "experience": experiences,
+            "education": education,
+            "skills": skills,
+            "about": [
+				{
+					"description":
+						"I really enjoy coding and helping out others, my favorite subject to read is about aliens and other civilizations.\nThis is just some writing so we can see how it looks when there is a good amount of context. Maybe I can create some more content to fill up.",
+					"resume": "true",
+					"page": "false"
+				},
+				{
+					"description": "Another about me section in case I want a different one in the resume from the page.",
+					"resume": "false",
+					"page": "true"
+				}
+			],
+			"purpose": [
+				{
+					"description": "Helping companies reach their goals by serving them great mate.",
+					"resume": "true",
+					"page": "true"
+				}
+			],
+            "links": [
+				{
+					"url": "https://www.linkedin.com/in/hernan-garcia-448400186/"
+				},
+				{
+					"url": "https://github.com/hernanjkd"
+				}
+			]
         }
 
 class Product(db.Model):
@@ -51,8 +89,6 @@ class Product(db.Model):
     url = db.Column(db.String(80), default="")
     page = db.Column(db.Boolean(80), default="")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default="")
-    #children = relationship("Child")
-    #products = db.relationship('Product', backref='User', lazy=True)
 
     def __repr__(self):
         return '<Product %r>' % self.description
@@ -74,8 +110,6 @@ class About(db.Model):
     resume = db.Column(db.String(80), default="")
     page = db.Column(db.String(80), default="")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default="")
-    #children = relationship("Child")
-    #products = db.relationship('Product', backref='User', lazy=True)
 
     def __repr__(self):
         return '<About %r>' % self.description
@@ -100,8 +134,6 @@ class Experience(db.Model):
     resume = db.Column(db.String(140), default="False")
     page = db.Column(db.String(120), default="False")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default="")
-    #children = relationship("Child")
-    #products = db.relationship('Product', backref='User', lazy=True)
 
     def __repr__(self):
         return '<Experience %r>' % self.title
@@ -128,8 +160,6 @@ class Education(db.Model):
     toDate = db.Column(db.String(80), default="")
     resume = db.Column(db.String(140), default="False")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default="")
-    #children = relationship("Child")
-    #products = db.relationship('Product', backref='User', lazy=True)
 
     def __repr__(self):
         return '<Education %r>' % self.school
@@ -152,8 +182,6 @@ class Skills(db.Model):
     resume = db.Column(db.String(140), default="False")
     page = db.Column(db.String(140), default="False")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), default="")
-    #children = relationship("Child")
-    #products = db.relationship('Product', backref='User', lazy=True)
 
     def __repr__(self):
         return '<Skills %r>' % self.skill
@@ -164,5 +192,4 @@ class Skills(db.Model):
             "resume": self.resume,
             "page": self.page,
             "id": self.id
-
         }
