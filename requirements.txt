@@ -1,0 +1,11 @@
+flask
+sqlalchemy
+flask-sqlalchemy
+flask-migrate
+flask-swagger
+psycopg2-binary
+python-dotenv
+eralchemy
+flask-cors
+mysqlclient
+flask-jwt-simple
