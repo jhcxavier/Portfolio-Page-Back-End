@@ -17,7 +17,7 @@ eralchemy = "*"
 flask-cors = "*"
 mysqlclient = "*"
 flask-jwt-simple = "*"
-pygraphviz = "*"
+
 
 [requires]
 python_version = "3.6"
