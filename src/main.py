@@ -80,14 +80,10 @@ def handle_user():
 
         user1 = User(
             firstname=body['firstname'],
-            lastname=body['firstname'],
+            lastname=body['lastname'],
             email=body['email'],
-            password=body['password'],
-            dobDate=body['dobDate'],
-            imageURL=body['imageURL'],
-            resumeStyle=body['resumeStyle'],
-            theme=body['theme'],
-            title=body['title'])
+            password=body['password'])
+           # dobDate=body['dobDate']  )
 
         db.session.add(user1)
         db.session.commit()

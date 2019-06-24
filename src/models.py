@@ -47,7 +47,6 @@ class User(db.Model):
                 "theme": self.theme,
                 "title": "Web Developer",
                 "id": self.id,
-                "porpuse": self.purpose,
                 "display": "objective"
             },
             "experience": experiences,
