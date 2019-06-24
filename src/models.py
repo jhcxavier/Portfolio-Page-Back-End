@@ -47,7 +47,8 @@ class User(db.Model):
                 "theme": self.theme,
                 "title": self.title,
                 "id": self.id,
-                "porpuse": self.purpose
+                "porpuse": self.purpose,
+                "display": self.objective
             },
             "experience": experiences,
             "education": education,
@@ -193,3 +194,4 @@ class Skills(db.Model):
             "page": self.page,
             "id": self.id
         }
+
