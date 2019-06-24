@@ -42,13 +42,13 @@ class User(db.Model):
                 "email": self.email,
                 "password": self.password,
                 "dobDate": self.dobDate,
-                "imageURL": self.imageURL,
+                "imageURL": "http://lorempixel.com/300/400/nature/2",
                 "resumeStyle": self.resumeStyle,
                 "theme": self.theme,
-                "title": self.title,
+                "title": "Web Developer",
                 "id": self.id,
                 "porpuse": self.purpose,
-                "display": self.objective
+                "display": "objective"
             },
             "experience": experiences,
             "education": education,
